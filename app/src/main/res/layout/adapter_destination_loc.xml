@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/destinationLayout"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <SearchView
+            android:id="@+id/searchDestinyLocation"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:iconifiedByDefault="false"
+            android:inputType="textPersonName"
+            android:queryHint="@string/text_destination"
+            android:searchHintIcon="@color/btnRegister"
+            android:searchIcon="@drawable/circle_gray" />
+
+        <ImageView
+            android:id="@+id/btnAddNewLoc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="10"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_add_circle_outline_black_24dp" />
+
+    </LinearLayout>
+</LinearLayout>
+

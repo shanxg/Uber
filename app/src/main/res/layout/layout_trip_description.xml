@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@android:color/white"
+    android:padding="6dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="6dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/civ_uberDescription"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+
+                android:src="@drawable/uberx"
+                app:civ_border_color="@android:color/black"
+                app:civ_border_width="2dp" />
+
+            <TextView
+                android:id="@+id/textTripDescriptionType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="13sp"
+                android:text="@string/text_uber_x"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"/>
+
+            <TextView
+                android:id="@+id/textUberDescriptionValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="10sp"
+                android:text="@string/text_currency"
+                android:textStyle="italic|bold"
+                android:textAlignment="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textUberTripTabUserDescriptor"
+                android:layout_width="match_parent"
+                android:layout_height="18dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@android:color/black"
+                android:backgroundTint="@android:color/black"
+                android:text="Driver"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:textAlignment="center"/>
+
+            <TextView
+                android:id="@+id/textUberUserName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="Sr. João Alberto"
+                android:textStyle="bold"
+                android:textAlignment="center"/>
+
+
+            <LinearLayout
+                android:id="@+id/myLocLayoutDescription"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <SearchView
+                    android:id="@+id/searchMyLocationDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:iconifiedByDefault="false"
+                    android:inputType="textPersonName"
+                    android:queryHint="@string/text_my_location"
+                    android:searchIcon="@drawable/circle" />
+
+                <ImageView
+                    android:id="@+id/btnMyLocDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="10"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_my_location_black_24dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/destinationLayoutDescription"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <SearchView
+                    android:id="@+id/searchDestinyLocationDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:iconifiedByDefault="false"
+                    android:inputType="textPersonName"
+                    android:queryHint="@string/text_destination"
+                    android:searchHintIcon="@color/btnRegister"
+                    android:searchIcon="@drawable/circle_gray" />
+
+                <ImageView
+                    android:id="@+id/btnAddNewLocDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="10"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_add_circle_outline_black_24dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <include layout="@layout/layout_recycler_addresses" />
+
+</LinearLayout>
