@@ -151,4 +151,16 @@
 
     <include layout="@layout/layout_recycler_addresses" />
 
+    <Button
+        android:id="@+id/buttonSearchDriver"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:backgroundTint="@android:color/black"
+        android:elevation="5dp"
+        android:text="@string/text_search_driver"
+        android:textColor="@android:color/white" />
+
+
 </LinearLayout>

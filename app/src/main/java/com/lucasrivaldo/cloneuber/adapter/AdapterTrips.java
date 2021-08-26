@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lucasrivaldo.cloneuber.R;
+import com.lucasrivaldo.cloneuber.helper.UberHelper;
 import com.lucasrivaldo.cloneuber.model.Trip;
 
 import java.util.List;
@@ -19,8 +20,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AdapterTrips extends RecyclerView.Adapter<AdapterTrips.TripsViewHolder> {
 
-    List<Trip> tripList;
-    Context context;
+    private List<Trip> tripList;
+    private Context context;
 
     public AdapterTrips(List<Trip> tripList, Context context) {
         this.tripList = tripList;
@@ -40,8 +41,11 @@ public class AdapterTrips extends RecyclerView.Adapter<AdapterTrips.TripsViewHol
     public void onBindViewHolder(@NonNull TripsViewHolder holder, int position) {
         Trip trip = tripList.get(position);
 
-        holder.civ_uberAdapterTrips.setImageResource(returnImageResourceId(trip.getTripType()));
-        holder.textReqUberType.setText(returnTypeName(trip.getTripType()));
+        holder.civ_uberAdapterTrips.setImageResource
+                (UberHelper.returnImageResourceId(trip.getTripType()));
+
+        holder.textReqUberType.setText
+                (UberHelper.returnTypeName(trip.getTripType(), context.getResources()));
 
         holder.searchMyLocation.setQueryHint(trip.getStartLoc().getAddressLines());
         holder.searchMyLocation.setEnabled(false);
@@ -67,7 +71,7 @@ public class AdapterTrips extends RecyclerView.Adapter<AdapterTrips.TripsViewHol
         private CircleImageView civ_uberAdapterTrips;
 
 
-        public TripsViewHolder(@NonNull View itemView) {
+        TripsViewHolder(@NonNull View itemView) {
             super(itemView);
 
             searchMyLocation = itemView.findViewById(R.id.searchMyLocation);
@@ -84,29 +88,5 @@ public class AdapterTrips extends RecyclerView.Adapter<AdapterTrips.TripsViewHol
         }
     }
 
-    private String returnTypeName(double type){
-        String typeText;
 
-        if (type==Trip.UBER_X)
-            typeText = context.getResources().getString(R.string.text_uber_x);
-        else if (type==Trip.UBER_SLCT)
-            typeText = context.getResources().getString(R.string.text_uber_select);
-        else
-            typeText = context.getResources().getString(R.string.text_uber_black);
-
-        return typeText;
-    }
-
-    private int returnImageResourceId(double type){
-        int resId;
-
-        if (type==Trip.UBER_X)
-            resId = R.drawable.uberx;
-        else if (type==Trip.UBER_SLCT)
-            resId = R.drawable.uber_select;
-        else
-            resId = R.drawable.uber_black;
-
-        return resId;
-    }
 }

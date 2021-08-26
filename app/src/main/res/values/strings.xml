@@ -1,32 +1,52 @@
 <resources>
-    <string name="app_name">Clone Uber</string>
-    <string name="title_activity_maps">Map</string>
-    <string name="register_button_text">Register</string>
-    <string name="uber_logo_description">Uber Logo</string>
-    <string name="text_password">Password</string>
-    <string name="text_user_email">User Email</string>
-    <string name="text_driver">Driver</string>
-    <string name="text_passenger">Passenger</string>
-    <string name="text_user_name">User Name</string>
+    <string name="app_name">(Clone) Uber</string>
     <string name="title_activity_uber_passenger">Uber</string>
     <string name="title_activity_uber_driver">Uber</string>
+    <string name="title_activity_driver_trip">Trip Activity</string>
+    <string name="title_activity_maps">Map</string>
+
+    <string name="uber_logo_description">Uber Logo</string>
+    <string name="register_button_text">Register</string>
+
+    <string name="text_user_email">User Email</string>
+    <string name="text_user_name">User Name</string>
+    <string name="text_password">Password</string>
+
+    <string name="text_logged_driver">You logged as a driver successfully.</string>
+    <string name="text_logged_passenger">You logged as a passenger successfully.</string>
+    <string name="text_driver">Driver</string>
+    <string name="text_passenger">Passenger</string>
+
     <string name="btn_start_text">start</string>
+    <string name="text_search_driver">SEARCH DRIVER</string>
+    <string name="text_confirm_aboard">Confirm you\'re aboard</string>
+    <string name="text_start_trip">START TRIP</string>
+    <string name="text_cancel_trip">CANCEL TRIP</string>
+    <string name="text_finalize_trip">FINALIZE TRIP</string>
+
     <string name="text_my_location">My location</string>
     <string name="text_destination">Destination</string>
     <string name="text_max_10_new_dest">Max. 10 Dest.</string>
+
     <string name="text_uber_black">Uber Black</string>
     <string name="text_uber_select">Uber Select</string>
     <string name="text_uber_x">Uber X</string>
     <string name="text_currency">R$ 00,00</string>
-    <string name="text_select_your_travel_experience">SELECT YOUR EXPERIENCE</string>
-    <string name="text_search_driver">SEARCH DRIVER</string>
+
     <string name="text_empty_address">Address is empty, you need to write at least the street name.</string>
-    <string name="text_logged_passenger">You logged as a passenger successfully.</string>
     <string name="text_addresslines_def">R. Address line, ### - Neighborhood, City - State, #####-CEP, Country</string>
+
+    <string name="text_select_your_travel_experience">SELECT YOUR EXPERIENCE</string>
     <string name="text_signin_auth">SIGNING IN</string>
-    <string name="text_cancel_trip">CANCEL TRIP</string>
-    <string name="text_trip_finalization">You arrived at your destination. Dont forget your things, pay the driver and have a nice day.</string>
+    <string name="text_progress_waiting_passenger">Waiting for passenger</string>
+    <string name="text_searching_trip">SEARCHING TRIP</string>
+
     <string name="text_driver_arrived_toast">Driver arrived at start location. Get on board and confirm you\'re ready to start.</string>
-    <string name="text_confirm_aboard">Confirm you\'re aboard</string>
-    <string name="title_activity_driver_trip">Trip Activity</string>
+    <string name="text_trip_finalization">You arrived at your destination. Dont forget your things, pay the driver and have a nice day.</string>
+
+    <string name="text_alert_start_loc">START LOCATION:</string>
+    <string name="text_alert_destination">DESTINATION:</string>
+    <string name="text_another_has_initiated">Another driver has initiated this trip</string>
+
+
 </resources>

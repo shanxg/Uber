@@ -1,24 +1,5 @@
 package com.lucasrivaldo.cloneuber.activity;
 
-import androidx.fragment.app.FragmentActivity;
-import android.os.Bundle;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.lucasrivaldo.cloneuber.R;
-
-import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -32,6 +13,7 @@ import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,6 +28,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
@@ -53,6 +44,7 @@ import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -81,7 +73,6 @@ import com.lucasrivaldo.cloneuber.helper.maps_helpers.SearchURL;
 import com.lucasrivaldo.cloneuber.model.Trip;
 import com.lucasrivaldo.cloneuber.model.UberAddress;
 import com.lucasrivaldo.cloneuber.model.User;
-import com.lucasrivaldo.cloneuber.view_model.MapViewModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,35 +80,41 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.lucasrivaldo.cloneuber.activity.MainActivity.MY_TAG_ERROR;
-import static com.lucasrivaldo.cloneuber.activity.MainActivity.MY_TAG_TEST;
+import static com.lucasrivaldo.cloneuber.activity.MainActivity.TAG_TEST;
+import static com.lucasrivaldo.cloneuber.activity.MainActivity.TAG;
+import static com.lucasrivaldo.cloneuber.helper.UberHelper.AWAITING;
+import static com.lucasrivaldo.cloneuber.helper.UberHelper.DRIVER_ARRIVED;
+import static com.lucasrivaldo.cloneuber.helper.UberHelper.DRIVER_COMING;
+import static com.lucasrivaldo.cloneuber.helper.UberHelper.ON_THE_WAY;
+import static com.lucasrivaldo.cloneuber.helper.UberHelper.PASSENGER_ABOARD;
+import static com.lucasrivaldo.cloneuber.helper.UberHelper.TRIP_FINALIZED;
+import static com.lucasrivaldo.cloneuber.helper.UberHelper.UBER_SLCT;
+import static com.lucasrivaldo.cloneuber.helper.UberHelper.UBER_X;
 import static com.lucasrivaldo.cloneuber.helper.maps_helpers.MapDirections.DISTANCE;
 import static com.lucasrivaldo.cloneuber.helper.maps_helpers.MapDirections.DURATION;
-import static com.lucasrivaldo.cloneuber.model.Trip.AWAITING;
-import static com.lucasrivaldo.cloneuber.model.Trip.DRIVER_ARRIVED;
-import static com.lucasrivaldo.cloneuber.model.Trip.DRIVER_COMING;
-import static com.lucasrivaldo.cloneuber.model.Trip.ON_THE_WAY;
-import static com.lucasrivaldo.cloneuber.model.Trip.PASSENGER_ABOARD;
-import static com.lucasrivaldo.cloneuber.model.Trip.TRIP_FINALIZED;
 
 
 public class DriverUberCorrect extends FragmentActivity
         implements OnMapReadyCallback, TaskLoadedCallback {
 
+    private static final String uType = ConfigurateFirebase.TYPE_DRIVER;
 
+    private String[] needPermissions = new String[]{
+            Manifest.permission.ACCESS_FINE_LOCATION
+    };
 
     private boolean isSelected;
     private String  statusLoopHolder = null;
 
     private GoogleMap mMap;
-    //private MapViewModel mMapViewModel;
 
     private User loggedDriver;
     private Trip currentTrip;
     private Marker driverMark, passengerMark, destinationMark;
 
     private UberAddress myAddress;
-
+    private List<String> requestList;
+    private List<Trip> tripList;
 
     private RecyclerView recyclerReqs;
     private AdapterTrips adapterTrips;
@@ -126,51 +123,62 @@ public class DriverUberCorrect extends FragmentActivity
     private ValueEventListener requestsEventListener;
     private ValueEventListener cTripValueEventListener;
 
-
     private GeoFire geoFire;
     private GeoQuery geoQueryPassenger, geoQueryDestination, geoQueryReqs;
     private GeoQueryEventListener tripStartQueryEventListener, tripDestQueryEventListener,
             reqsQueryEventListener;
     private Circle queryReqsCircle, queryTripCircle;
 
-
-
+    private LocationManager locationManager;
+    private LocationListener locationListener;
 
     private SearchView searchMyLocation, searchDestinyLocation;
     private TextView textTripDescriptionType, textUberDescriptionValue, textUberUserName,
             textDuration, textDistance, progressText;
     private CircleImageView civ_uberDescription;
 
-
-    private LinearLayout includeTripTab;
+    private TextView buttonWork;
+    private ImageView imgStop;
+    private ConstraintLayout workLayout;
+    private LinearLayout includeTripTab, includeProgressBar;
     private Button buttonSearchDriver;
 
     private HashMap<String, String> routeTextMap;
     private Polyline currentPolyline;
     //private QueryTask queryTask;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //TODO REDIRECTS TO TEST ACTIVITY
+        startActivity(new Intent(this, DriverTripActivity.class));
+        finish();
+
+        /*
+        preLoad();
+        // STARTS ACTICITY ONLY IF USER DATA NOT NULL
+        UserFirebase.getLoggedUserData
+                (uType, valueEventListener(UserFirebase.GET_LOGGED_USER_DATA));
+
+         */
 
     }
 
-
-
     private void preLoad() {
-
+        requestList = new ArrayList<>();
+        tripList = new ArrayList<>();
 
         geoFire = ConfigurateFirebase.getGeoFire();
         /*
         tripStartQueryEventListener = null;
-
+        reqsQueryEventListener = null;
          */
     }
 
     private void setContentView() {
         setContentView(R.layout.activity_uber_driver);
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("(Clone) Uber Driver");
         setActionBar(toolbar);
@@ -186,7 +194,7 @@ public class DriverUberCorrect extends FragmentActivity
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.mapDriver);
         mapFragment.getMapAsync(this);
 
     }
@@ -224,7 +232,7 @@ public class DriverUberCorrect extends FragmentActivity
         includeTripTab = findViewById(R.id.includeTripTab);
 
         findViewById(R.id.selectTypeLayout).setVisibility(View.GONE);
-        findViewById(R.id.includeTripDescriptionTab).setVisibility(View.VISIBLE);
+
 
         civ_uberDescription = findViewById(R.id.civ_uberDescription);
         textTripDescriptionType = findViewById(R.id.textTripDescriptionType);
@@ -502,7 +510,7 @@ public class DriverUberCorrect extends FragmentActivity
                     throw error.toException();
                 }catch (Exception e){
                     e.printStackTrace();
-                    Log.d(MY_TAG_ERROR, "completionListener: "+ e.getMessage());
+                    Log.d(TAG, "completionListener: "+ e.getMessage());
                 }
             }
         };
@@ -933,28 +941,6 @@ public class DriverUberCorrect extends FragmentActivity
 
     }
 
-    /** #############################     ACTIVITY LIFE-CYCLE    ############################## **/
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
     /** ##############################     ACTIVITY PROCESSES    ############################## **/
 
 
@@ -982,8 +968,7 @@ public class DriverUberCorrect extends FragmentActivity
     }
 
     @Override
-    public void onRequestPermissionsResult
-            (int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         for (int permissionResult : grantResults) {
@@ -1069,9 +1054,32 @@ public class DriverUberCorrect extends FragmentActivity
                 source.getWidth(), source.getHeight(), matrix, true);
     }
 
+    private void permisionValidationAlert(){
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Permissions denied:");
+        builder.setMessage("To keep using the App, you need to accept the Requested permissions.");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Confirm",
+                (dialog, which) -> SystemPermissions.validatePermissions
+                        (needPermissions, this, 1));
 
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
 
+    private void toggleStartWorkInterface(boolean isSelected){
+
+        // BUTTON SETTINGS
+        String btnText = isSelected? " " :  getResources().getString(R.string.btn_start_text);
+
+        buttonWork.setText(btnText);
+        buttonWork.setSelected(isSelected);
+
+        // IMAGE STOP SETTINGS
+        int visibility = isSelected? View.VISIBLE : View.GONE;
+        imgStop.setVisibility(visibility);
+    }
 
     private void toggleTripNWorkLayout(boolean isOpening) {
         int gone = View.GONE;
@@ -1111,9 +1119,9 @@ public class DriverUberCorrect extends FragmentActivity
     private String returnTypeName(double type){
         String typeText;
 
-        if (type==Trip.UBER_X)
+        if (type == UBER_X)
             typeText = getResources().getString(R.string.text_uber_x);
-        else if (type==Trip.UBER_SLCT)
+        else if (type == UBER_SLCT)
             typeText = getResources().getString(R.string.text_uber_select);
         else
             typeText = getResources().getString(R.string.text_uber_black);
@@ -1124,9 +1132,9 @@ public class DriverUberCorrect extends FragmentActivity
     private int returnImageResourceId(double type){
         int resId;
 
-        if (type==Trip.UBER_X)
+        if (type == UBER_X)
             resId = R.drawable.uberx;
-        else if (type==Trip.UBER_SLCT)
+        else if (type == UBER_SLCT)
             resId = R.drawable.uber_select;
         else
             resId = R.drawable.uber_black;
@@ -1245,7 +1253,7 @@ public class DriverUberCorrect extends FragmentActivity
             @Override
             public void onGeoQueryReady() {
 
-                Log.d(MY_TAG_TEST, "onGeoQueryReady: GEOQUERY READY");
+                Log.d(TAG_TEST, "onGeoQueryReady: GEOQUERY READY");
 
                 // ADDING CIRCLE FOR DEMONSTRATION
 
@@ -1262,7 +1270,7 @@ public class DriverUberCorrect extends FragmentActivity
                 } catch (Exception e) {
                     throwToast(e.getMessage(), true);
                     e.printStackTrace();
-                    Log.d(MY_TAG_ERROR, "onGeoQueryError: " + e.toString());
+                    Log.d(TAG, "onGeoQueryError: " + e.toString());
                 }
             }
         };
@@ -1344,7 +1352,7 @@ public class DriverUberCorrect extends FragmentActivity
     }
 
     private void checkDriverEntered(String key) {
-        Log.d(MY_TAG_TEST, "checkDriverEntered: Driver "+key+" ENTERED");
+        Log.d(TAG_TEST, "checkDriverEntered: Driver "+key+" ENTERED");
         throwToast(key+" entered", false);
     }
 
@@ -1355,7 +1363,7 @@ public class DriverUberCorrect extends FragmentActivity
 
 
     private void restartReqsQuery() {
-        Log.d(MY_TAG_TEST, "onGeoQueryReady: DRIVER LEFT");
+        Log.d(TAG_TEST, "onGeoQueryReady: DRIVER LEFT");
         setGeoQueryReqs(true); // CANCELING PREVIOUS LISTENER
         if (buttonWork.isSelected())
             setGeoQueryReqs(false); // STARTING NEW
@@ -1367,7 +1375,7 @@ public class DriverUberCorrect extends FragmentActivity
         } catch (Exception e) {
             throwToast(e.getMessage(), true);
             e.printStackTrace();
-            Log.d(MY_TAG_ERROR, "onGeoQueryError: " + e.toString());
+            Log.d(TAG, "onGeoQueryError: " + e.toString());
         }
     }
 
@@ -1378,7 +1386,7 @@ public class DriverUberCorrect extends FragmentActivity
 
         // ADDING CIRCLE FOR DEMONSTRATION
 
-        Log.d(MY_TAG_TEST, "onGeoQueryReady: GEOQUERY READY");
+        Log.d(TAG_TEST, "onGeoQueryReady: GEOQUERY READY");
 
         throwToast("GEOQUERY READY", false);
 
@@ -1410,7 +1418,7 @@ public class DriverUberCorrect extends FragmentActivity
         }
     }
 /*
-    class QueryTask extends AsyncTask<Void, DataSnapshot, Void>{
+    class QueryTask extends AsyncTask<Void,Void, Void>{
 
         private GeoQuery mGeoQuery;
         private GeoQueryEventListener mGeoQueryEventListener;
@@ -1431,4 +1439,3 @@ public class DriverUberCorrect extends FragmentActivity
 
 
 }
-

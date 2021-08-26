@@ -5,28 +5,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.DriverTripActivity">
+    tools:context=".activity.PassengerTripActivity">
 
-    <include
-        android:id="@+id/includeToolbar"
-        layout="@layout/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        map:layout_constraintEnd_toEndOf="parent"
-        map:layout_constraintStart_toStartOf="parent"
-        map:layout_constraintTop_toTopOf="parent" />
-
-    <fragment
-        android:id="@+id/mapDriverTrip"
+    <fragment android:id="@+id/mapPassengerTrip"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-
-        map:layout_constraintBottom_toTopOf="@+id/includeTripTab"
+        map:layout_constraintBottom_toTopOf="@+id/includeTripDescription"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
-        map:layout_constraintTop_toBottomOf="@+id/includeToolbar" />
+        map:layout_constraintTop_toBottomOf="@+id/includeToolbar2"/>
+
+    <include
+        android:id="@+id/includeToolbar2"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintTop_toTopOf="parent" />
 
     <include
         android:id="@+id/layout_distance"
@@ -36,13 +33,12 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="32dp"
-
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
-        map:layout_constraintTop_toTopOf="@+id/mapDriverTrip"
+        map:layout_constraintTop_toTopOf="@+id/mapPassengerTrip"
 
         android:visibility="gone"
-        tools:visibility="visible" />
+        tools:visibility="visible"/>
 
     <include
         android:id="@+id/layout_duration"
@@ -52,26 +48,21 @@
         android:layout_marginStart="64dp"
         android:layout_marginEnd="64dp"
         android:layout_marginBottom="4dp"
-
-        map:layout_constraintBottom_toTopOf="@+id/includeTripTab"
+        map:layout_constraintBottom_toBottomOf="@+id/mapPassengerTrip"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
 
         android:visibility="gone"
-        tools:visibility="visible" />
+        tools:visibility="visible"/>
 
     <include
-        android:id="@+id/includeTripTab"
+        android:id="@+id/includeTripDescription"
         layout="@layout/layout_trip_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-
         map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintEnd_toEndOf="parent"
-        map:layout_constraintStart_toStartOf="parent"
-
-        android:visibility="visible"
-        tools:visibility="visible" />
+        map:layout_constraintStart_toStartOf="parent" />
 
     <include
         android:id="@+id/includeProgressBar"

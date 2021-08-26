@@ -2,7 +2,6 @@ package com.lucasrivaldo.cloneuber.activity;
 
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
@@ -27,17 +26,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.lucasrivaldo.cloneuber.R;
 import com.lucasrivaldo.cloneuber.config.ConfigurateFirebase;
+import com.lucasrivaldo.cloneuber.helper.AlertDialogUtil;
 import com.lucasrivaldo.cloneuber.helper.UserFirebase;
 import com.lucasrivaldo.cloneuber.model.User;
 
 import static com.lucasrivaldo.cloneuber.config.ConfigurateFirebase.TYPE_PASSENGER;
 import static com.lucasrivaldo.cloneuber.config.ConfigurateFirebase.TYPE_DRIVER;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static String GOOGLE_MAPS_KEY;
-    public static String MY_TAG_ERROR = "USERTESTERROR";
-    public static String MY_TAG_TEST = "USERTESTAPP";
+    public static String TAG = "USER_TEST_ERROR";
+    public static String TAG_TEST = "USER_TEST_APP";
 
     private String lastUserType;
 
@@ -79,8 +79,10 @@ public class MainActivity extends AppCompatActivity {
                         Class aClass = lastUserType.equals(TYPE_DRIVER) ?
                                 UberDriverActivity.class : UberPassengerActivity.class;
 
-                        startActivity(new Intent(MainActivity.this, aClass));
+                        startActivity(new Intent(getApplicationContext(), aClass));
                         finish();
+                    }else {
+                        loadMainActivity();
                     }
                 }
 
@@ -89,13 +91,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         else {
-            progressBarOpen.setVisibility(View.GONE);
-            findViewById(R.id.buttonsLayout).setVisibility(View.VISIBLE);
-            loadInterface();
-            setClickListeners();
+            loadMainActivity();
         }
     }
 
+    private void loadMainActivity(){
+        progressBarOpen.setVisibility(View.GONE);
+        findViewById(R.id.buttonsLayout).setVisibility(View.VISIBLE);
+        loadInterface();
+        setClickListeners();
+    }
     private void loadInterface(){
         buttonSignIn = findViewById(R.id.buttonSignIn);
         buttonRegister = findViewById(R.id.buttonRegister);
@@ -158,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 String logType = getUserType();
 
                     if(dataSnapshot.child(logType).hasChild(userId))
-                        startUberActivity();
+                        startUberActivity(logType);
                     else
                         loginValidationAlert(dataSnapshot, logType, userId);
             }
@@ -171,7 +176,15 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
     /** ##############################      CLICK LISTENERS     ############################### **/
+
+    @Override
+    public void onClick(View view) {
+
+    }
+
+
 
     private void setClickListeners(){
 
@@ -221,9 +234,11 @@ public class MainActivity extends AppCompatActivity {
 
     /** #################################        HELPERS       ################################ **/
 
-    private void startUberActivity(){
+    private void startUberActivity(String logType){
 
-        Class aClass = getUserType().equals(TYPE_DRIVER) ?
+        throwToast("stating "+logType+" activity", true);
+
+        Class aClass = logType.equals(TYPE_DRIVER) ?
                 UberDriverActivity.class : UberPassengerActivity.class;
 
         startActivity(new Intent(MainActivity.this, aClass));
@@ -247,44 +262,28 @@ public class MainActivity extends AppCompatActivity {
                         if(task.isSuccessful()) {
                             String textType = logType.equals(TYPE_DRIVER) ?
                                     "Diver" : "Passenger";
-                            throwToast
-                                    (textType + " registration successful",
-                                            false);
 
-                            startUberActivity();
+                            throwToast(textType + " registration successful", false);
+
+                            startUberActivity(logType);
                         }
                     });
 
 
         } ;
 
+        // ###############################      CLICK LISTENER      ###############################
+
+        DialogInterface.OnClickListener negListener =
+                (dialog, which) ->
+                throwToast("Try signing in again: \n"
+                                +"   Remember to select which type of user you are.\n"
+                                +"             (Passenger or Driver)", true);
+
         // ################################     DIALOG BUILDER     ################################
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(false);
-
-        builder.setTitle("Account not found:");
-
-        builder.setMessage("You might have not selected the correct user type,"
-                         + " try to switch the user type to sign in again, or "
-                         + "if you want to sign in as "+getUserType()+", click confirm. \n"+ "\n"
-                + "If you dont have an account, cancel this dialog and click in register button.");
-
-
-        builder.setPositiveButton("Confirm",
-                (dialogInterface, i) -> dialogInterface.dismiss() );
-
-        builder.setNegativeButton("No",
-                (dialog, which) ->
-                        throwToast("Try signing in again: \n"
-                                +"   Remember to select which type of user you are.\n"
-                                +"             (Passenger or Driver)",
-                                true));
-
-        AlertDialog alert = builder.create();
-        alert.setOnDismissListener(dismissListener);
-        alert.show();
-
+        AlertDialogUtil.loginValidationAlert
+                (this, getUserType(), negListener, dismissListener);
 
     }
 
@@ -312,10 +311,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String getUserType(){
-        return  switchType.isChecked() ? TYPE_DRIVER :  TYPE_PASSENGER;
-    }
-
     private void setLogTypeTextColor(){
         if (switchType.isChecked()) {
             textButtonSwitchDriver.setTextColor(getResources().getColor(R.color.btnSignIn));
@@ -326,13 +321,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private String getUserType(){
+        return  switchType.isChecked() ? TYPE_DRIVER :  TYPE_PASSENGER;
+    }
+
     private void throwToast(String message, boolean isLong){
-        int  lenght = Toast.LENGTH_LONG;
-        if(!isLong)
-            lenght = Toast.LENGTH_SHORT;
+        int  length = isLong ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
 
-        Toast.makeText
-                (this, message, lenght).show();
-
+        Toast.makeText(this, message, length).show();
     }
 }

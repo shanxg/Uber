@@ -7,15 +7,15 @@
     android:layout_height="match_parent"
     tools:context=".activity.UberPassengerActivity">
 
-    <include
-        android:id="@+id/includeMap"
-        layout="@layout/layout_map"
+    <fragment
+        android:id="@+id/mapPassenger"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        map:layout_constraintBottom_toTopOf="@+id/includeSelectDriverTab"
+        map:layout_constraintBottom_toTopOf="@+id/includeSelectExperienceTab"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
-        map:layout_constraintTop_toBottomOf="@+id/includeToolbar2" />
+        map:layout_constraintTop_toBottomOf="@+id/includeToolbar2"/>
 
     <include
         android:id="@+id/includeToolbar2"
@@ -31,18 +31,30 @@
         layout="@layout/layout_search_address"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="10dp"
         android:elevation="8dp"
         android:visibility="visible"
-        map:layout_constraintBottom_toTopOf="@+id/includeSelectDriverTab"
+        map:layout_constraintBottom_toTopOf="@+id/includeSelectExperienceTab"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
         map:layout_constraintTop_toBottomOf="@+id/includeToolbar2"
         map:layout_constraintVertical_bias="0.0" />
+
+    <include
+        android:id="@+id/includeSelectExperienceTab"
+        layout="@layout/layout_select_uber"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:elevation="5dp"
+        map:layout_constraintBottom_toBottomOf="parent"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintStart_toStartOf="parent"
+
+        android:visibility="gone"
+        tools:visibility="visible" />
 
     <include
         android:id="@+id/layout_distance"
@@ -54,7 +66,8 @@
         android:layout_marginEnd="32dp"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
-        map:layout_constraintTop_toTopOf="@+id/includeMap"
+        map:layout_constraintTop_toTopOf="@+id/mapPassenger"
+
         android:visibility="gone"
         tools:visibility="visible"/>
 
@@ -66,25 +79,12 @@
         android:layout_marginStart="64dp"
         android:layout_marginEnd="64dp"
         android:layout_marginBottom="4dp"
-        map:layout_constraintBottom_toBottomOf="@+id/includeMap"
+        map:layout_constraintBottom_toBottomOf="@+id/mapPassenger"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
+
         android:visibility="gone"
         tools:visibility="visible"/>
-
-    <include
-        android:id="@+id/includeSelectDriverTab"
-        layout="@layout/layout_select_uber"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-
-        android:elevation="5dp"
-        android:visibility="gone"
-
-        map:layout_constraintBottom_toBottomOf="parent"
-        map:layout_constraintEnd_toEndOf="parent"
-        map:layout_constraintStart_toStartOf="parent"
-        tools:visibility="visible" />
 
     <include
         android:id="@+id/includeLoadingSearchDriver"
@@ -93,16 +93,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:elevation="5dp"
-
-        android:visibility="gone"
-        map:layout_constraintBottom_toBottomOf="@+id/includeMap"
-        map:layout_constraintEnd_toEndOf="@+id/includeMap"
+        map:layout_constraintBottom_toBottomOf="@+id/mapPassenger"
+        map:layout_constraintEnd_toEndOf="@+id/mapPassenger"
         map:layout_constraintHorizontal_bias="0.5"
-
-        map:layout_constraintStart_toStartOf="@+id/includeMap"
+        map:layout_constraintStart_toStartOf="@+id/mapPassenger"
         map:layout_constraintTop_toBottomOf="@+id/layout_distance"
-        map:layout_constraintVertical_bias="0.0" />
+        map:layout_constraintVertical_bias="0.0"
 
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

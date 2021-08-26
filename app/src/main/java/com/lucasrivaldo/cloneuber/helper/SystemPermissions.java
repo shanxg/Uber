@@ -13,7 +13,6 @@ import java.util.List;
 
 public class SystemPermissions {
 
-
     public static boolean validatePermissions(String[] permissions, Activity context, int requesCode){
 
         if( Build.VERSION.SDK_INT >= 23){

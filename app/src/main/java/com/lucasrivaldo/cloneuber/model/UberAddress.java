@@ -1,6 +1,8 @@
 package com.lucasrivaldo.cloneuber.model;
 
-public class UberAddress {
+import java.io.Serializable;
+
+public class UberAddress implements Serializable {
 
     public static final String CURRENT_LOC = "Current Location";
     public static final String NO_LOC_FOUND = "Location not found";

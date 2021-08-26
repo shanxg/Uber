@@ -6,22 +6,11 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 
-
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
-import com.firebase.geofire.GeoQuery;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.lucasrivaldo.cloneuber.activity.UberPassengerActivity;
 import com.lucasrivaldo.cloneuber.config.ConfigurateFirebase;
@@ -32,11 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.lucasrivaldo.cloneuber.activity.MainActivity.TAG;
+
 
 public class UserFirebase {
 
     public static final int GET_LOGGED_USER_DATA = -1;
-    public static final int GET_USER_DATA = 0;
+    public static final int GET_REQS_DATA = 0;
     public static final int GET_TRIP_DATA = 1;
     public static final int GET_TRIPS_DATA = 10;
 
@@ -57,37 +48,6 @@ public class UserFirebase {
     public static FirebaseUser getMyUser() {
 
         return ConfigurateFirebase.getFirebaseAuth().getCurrentUser();
-    }
-
-    public static boolean updateUserProfImage(Uri profileImage) {
-
-        try {
-            FirebaseUser user = getMyUser();
-
-            if(user!=null) {
-
-                UserProfileChangeRequest userChangeRequest =
-                        new UserProfileChangeRequest.Builder()
-                                .setPhotoUri(profileImage)
-                                .build();
-
-
-                user.updateProfile(userChangeRequest).addOnCompleteListener(task -> {
-
-                    if (!task.isSuccessful()) {
-                        Log.i("USER SAVE ERROR", "Error updating profile image at firebase user. \n" + task.getException().getMessage());
-                    }
-                });
-                return true;
-            }
-            return false;
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            return false;
-
-        }
     }
 
     public static boolean updateUserProfName(String profileName) {
@@ -117,8 +77,6 @@ public class UserFirebase {
         }
     }
 
-
-
     public static void getLoggedUserData(String uType, ValueEventListener valueEventListener){
         DatabaseReference userRef = ConfigurateFirebase.getFireDBRef()
                                             .child(ConfigurateFirebase.USERS)
@@ -127,8 +85,6 @@ public class UserFirebase {
 
         userRef.addListenerForSingleValueEvent(valueEventListener);
     }
-
-
 
     public static void getLastLogin(ValueEventListener loginListener){
         DatabaseReference lastLoginRef = ConfigurateFirebase.getFireDBRef()
@@ -139,16 +95,22 @@ public class UserFirebase {
         userRef.child("loginType").addListenerForSingleValueEvent(loginListener);
     }
 
-    public static void setLastLogin(String uType){
+    public static boolean setLastLogin(String uType){
 
         DatabaseReference lastLoginRef = ConfigurateFirebase.getFireDBRef()
                                             .child(ConfigurateFirebase.LAST_LOGIN);
 
         DatabaseReference userRef = lastLoginRef.child(getCurrentUserID());
 
-        userRef.child("loginType").setValue(uType);
+        try {
+            userRef.child("loginType").setValue(uType);
+            return true;
+        }catch (Exception e ){
+            e.printStackTrace();
+            Log.d(TAG, "setLastLogin: \n"+ e.getMessage());
+            return false;
+        }
     }
-
 
     public static List<UberAddress> getAddress(Context context, LatLng loc, int requestCode){
         List<UberAddress> addressList = new ArrayList<>();
@@ -238,7 +200,7 @@ public class UserFirebase {
                 UberAddress address = new UberAddress();
 
                 address.setAddressLines(geocoderAddress.getAddressLine(0));
-                address.setSubLocality(geocoderAddress.getSubLocality());
+
                 address.setState(geocoderAddress.getAdminArea());
                 address.setCity(geocoderAddress.getSubAdminArea());
                 address.setAddress(geocoderAddress.getThoroughfare());
@@ -248,6 +210,11 @@ public class UserFirebase {
                 address.setLatitude(geocoderAddress.getLatitude());
                 address.setLongitude(geocoderAddress.getLongitude());
 
+                if (geocoderAddress.getSubLocality()!=null)
+                    address.setSubLocality(geocoderAddress.getSubLocality());
+                else
+                    address.setSubLocality("");
+
                 if (geocoderAddress.getSubThoroughfare()!=null)
                     address.setAddressNum(geocoderAddress.getSubThoroughfare());
                 else
@@ -255,8 +222,6 @@ public class UserFirebase {
 
                 addressList.add(address);
             }
-
-
             return addressList;
 
         } catch (IOException e) {

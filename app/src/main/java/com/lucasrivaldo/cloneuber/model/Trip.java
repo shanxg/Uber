@@ -4,26 +4,20 @@ import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
 import com.lucasrivaldo.cloneuber.config.ConfigurateFirebase;
+import com.lucasrivaldo.cloneuber.helper.UberHelper;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 
 
-public class Trip {
 
-    public Trip() {}
 
-    public static final String START_TRIP = "SEARCH DRIVER";
-    public static final String AWAITING = "Searching for driver";
-    public static final String DRIVER_COMING = "Driver on the way";
-    public static final String DRIVER_ARRIVED = "Driver arrived";
-    public static final String PASSENGER_ABOARD = "Passenger aboard";
-    public static final String ON_THE_WAY = "On the way to destination";
-    public static final String TRIP_FINALIZED = "Trip finalized";
+public class Trip implements Serializable {
 
-    public static final double UBER_X = 1;
-    public static final double UBER_SLCT = 1.3;
-    public static final double UBER_BLACK = 2;
+    public Trip() {this.passengerCancelling = false;}
+
+    private boolean passengerCancelling;
 
     private User driver, passenger;
     private String status, tripId, value, distanceText, durationText;
@@ -44,7 +38,7 @@ public class Trip {
 
         if (tripValue<5.50) {
             tripValue = 5.50;
-        }else if(tripType==UBER_BLACK && tripValue<8)
+        }else if(tripType == UberHelper.UBER_BLACK && tripValue < 8)
             tripValue = 8.00;
 
         return decimalFormat.format(tripValue);
@@ -132,7 +126,8 @@ public class Trip {
                 return false;
             }
         }else {
-            if (this.getStatus().equals(Trip.START_TRIP) || this.getStatus().equals(Trip.AWAITING))
+            if (this.getStatus().equals(UberHelper.START_TRIP)
+                    || this.getStatus().equals(UberHelper.AWAITING))
                 return true;
             else
                 return false;
@@ -148,6 +143,7 @@ public class Trip {
                                         .child(this.getTripId());
 
             HashMap trip = new HashMap();
+            trip.put("passengerCancelling", isPassengerCancelling());
             trip.put("status", this.getStatus());
 
             trip.put("driver", this.getDriver());
@@ -175,7 +171,8 @@ public class Trip {
                 return false;
             }
         }else {
-            if (this.getStatus().equals(Trip.START_TRIP) || this.getStatus().equals(Trip.AWAITING))
+            if (this.getStatus().equals(UberHelper.START_TRIP)
+                    || this.getStatus().equals(UberHelper.AWAITING))
                 return true;
             else
                 return false;
@@ -198,6 +195,14 @@ public class Trip {
             Log.d("USERAPP", "SAVE ERROR: \n"+e.getMessage());
             return false;
         }
+    }
+
+    public boolean isPassengerCancelling() {
+        return passengerCancelling;
+    }
+
+    public void setPassengerCancelling(boolean passengerCancelling) {
+        this.passengerCancelling = passengerCancelling;
     }
 
     public String getDistanceText() {
@@ -248,7 +253,7 @@ public class Trip {
 
     public void makeValue(double tripType) {
 
-        this.value = "R$ "+this.calculate(tripType);
+        this.setValue("R$ "+this.calculate(tripType));
     }
 
     public String getTripId() {
@@ -299,5 +304,17 @@ public class Trip {
         this.destination = destination;
     }
 
+/*
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
+
+    }
+
+ */
 }
